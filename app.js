@@ -6,11 +6,10 @@ const app = express()
 app.use(express.json())
 
 app.post('/users', async (req, res) => {
-  console.log(req.body)
-  const { name } = req.body
+  const { name, email, role } = req.body
 
   try {
-    const user = await User.create({ name})
+    const user = await User.create({ name, email, role })
 
     return res.json(user)
   } catch (err) {
@@ -30,11 +29,11 @@ app.get('/users', async (req, res) => {
   }
 })
 
-app.get('/users/:userId', async (req, res) => {
-  const userId = req.params.userId
+app.get('/users/:uuid', async (req, res) => {
+  const uuid = req.params.uuid
   try {
     const user = await User.findOne({
-      where: { userId },
+      where: { uuid },
       include: 'posts',
     })
 
@@ -45,10 +44,10 @@ app.get('/users/:userId', async (req, res) => {
   }
 })
 
-app.delete('/users/:userId', async (req, res) => {
-  const userId = req.params.userId
+app.delete('/users/:uuid', async (req, res) => {
+  const uuid = req.params.uuid
   try {
-    const user = await User.findOne({ where: { userId } })
+    const user = await User.findOne({ where: { uuid } })
 
     await user.destroy()
 
@@ -59,13 +58,15 @@ app.delete('/users/:userId', async (req, res) => {
   }
 })
 
-app.put('/users/:userId', async (req, res) => {
-  const userId = req.params.userId
-  const { name } = req.body
+app.put('/users/:uuid', async (req, res) => {
+  const uuid = req.params.uuid
+  const { name, email, role } = req.body
   try {
-    const user = await User.findOne({ where: { userId } })
+    const user = await User.findOne({ where: { uuid } })
 
     user.name = name
+    user.email = email
+    user.role = role
 
     await user.save()
 
@@ -77,10 +78,10 @@ app.put('/users/:userId', async (req, res) => {
 })
 
 app.post('/posts', async (req, res) => {
-  const { userId, body } = req.body
+  const { userUuid, body } = req.body
 
   try {
-    const user = await User.findOne({ where: { userId } })
+    const user = await User.findOne({ where: { uuid: userUuid } })
 
     const post = await Post.create({ body, userId: user.id })
 
@@ -102,8 +103,8 @@ app.get('/posts', async (req, res) => {
   }
 })
 
-app.listen({ port: 3003 }, async () => {
-  console.log('Server up on http://localhost:3003')
+app.listen({ port: 5000 }, async () => {
+  console.log('Server up on http://localhost:5000')
   await sequelize.authenticate()
   console.log('Database Connected!')
 })

@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "fusion",
-    "password": "fusion",
-    "database": "fusion",
-    "host": "localhost",
+    "username": "Classsed",
+    "password": "root",
+    "database": "sequelize_db",
+    "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
